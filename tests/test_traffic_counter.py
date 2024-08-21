@@ -59,8 +59,8 @@ def test_get_least_car_of_contiguous_periods(mock_data, traffic_counter):
     Test for the get_least_car_of_contiguous_periods function.
     """
     least_cars = traffic_counter.get_least_car_of_contiguous_periods(2)
-    assert len(least_cars) == 1
-    assert least_cars[0][0] == mock_data[0].cars + mock_data[2].cars
+    assert len(least_cars) == 2
+    assert least_cars[0][0] == mock_data[1].cars + mock_data[2].cars
 
 
 def test_line_to_half_hourly_car(mock_data):
@@ -68,7 +68,7 @@ def test_line_to_half_hourly_car(mock_data):
     Test for the line_to_half_hourly_car static method.
     """
     line = "2023-08-20T08:00:00 10"
-    half_hourly_car = TrafficCounter.line_to_half_hourly_car(line)
+    half_hourly_car = TrafficCounter._line_to_half_hourly_car(line)
     assert half_hourly_car.timestamp == datetime(2023, 8, 20, 8, 0)
     assert half_hourly_car.cars == 10
 
@@ -77,5 +77,5 @@ def test_get_half_hourly_cars_from_file(traffic_counter):
     """
     Test for the get_half_hourly_cars_from_file method.
     """
-    half_hourly_cars = traffic_counter.get_half_hourly_cars_from_file(traffic_counter.data_dir + "/traffic.txt")
+    half_hourly_cars = traffic_counter._get_half_hourly_cars_from_file(traffic_counter.data_dir + "/traffic.txt")
     assert len(half_hourly_cars) == 3

@@ -17,8 +17,8 @@ class HalfHourlyCar:
         self.timestamp = timestamp
         self.cars = cars
 
-    def __str__(self):
-        return f"{self.timestamp} {self.cars}"
+    def __repr__(self):
+        return f"{self.timestamp} --> {self.cars}"
 
 
 class DailyCar:
@@ -34,8 +34,8 @@ class DailyCar:
         self.date = date
         self.cars = cars
 
-    def __str__(self):
-        return f"{self.date} {self.cars}"
+    def __repr__(self):
+        return f"{self.date} --> {self.cars}"
 
 
 class TrafficCounter:
@@ -57,10 +57,10 @@ class TrafficCounter:
             data_dir (str): The directory containing the traffic data files.
         """
         self.data_dir = data_dir
-        self.all_half_hourly_cars = sorted(self.get_all_half_hourly_cars(), key=lambda car: car.timestamp)
+        self.all_half_hourly_cars = sorted(self._get_all_half_hourly_cars(), key=lambda car: car.timestamp)
 
     @staticmethod
-    def line_to_half_hourly_car(line: str, pattern: str = "%Y-%m-%dT%H:%M:%S") -> HalfHourlyCar:
+    def _line_to_half_hourly_car(line: str, pattern: str = "%Y-%m-%dT%H:%M:%S") -> HalfHourlyCar:
         """
         Converts a line from the input file into a HalfHourlyCar object.
 
@@ -75,7 +75,7 @@ class TrafficCounter:
         timestamp = datetime.strptime(timestamp_str, pattern)
         return HalfHourlyCar(timestamp, int(cars))
 
-    def get_half_hourly_cars_from_file(self, file_path: str) -> List[HalfHourlyCar]:
+    def _get_half_hourly_cars_from_file(self, file_path: str) -> List[HalfHourlyCar]:
         """
         Reads a file and converts its content into a list of HalfHourlyCar objects.
 
@@ -87,7 +87,7 @@ class TrafficCounter:
         """
         try:
             with open(file_path, 'r') as file:
-                return [self.line_to_half_hourly_car(line) for line in file if line.strip()]
+                return [self._line_to_half_hourly_car(line) for line in file if line.strip()]
         except FileNotFoundError:
             self.logger.error(f"File not found: {file_path}")
             return []
@@ -95,7 +95,7 @@ class TrafficCounter:
             self.logger.error(f"Error reading file {file_path}: {e}")
             return []
 
-    def get_all_half_hourly_cars(self, file_ext: str = "txt") -> List[HalfHourlyCar]:
+    def _get_all_half_hourly_cars(self, file_ext: str = "txt") -> List[HalfHourlyCar]:
         """
         Reads all files in the data directory and aggregates their content into a list of HalfHourlyCar objects.
 
@@ -110,7 +110,7 @@ class TrafficCounter:
             for file_name in os.listdir(self.data_dir):
                 if file_name.endswith(file_ext):
                     file_path = os.path.join(self.data_dir, file_name)
-                    cars.extend(self.get_half_hourly_cars_from_file(file_path))
+                    cars.extend(self._get_half_hourly_cars_from_file(file_path))
         return cars
 
     def total_cars(self) -> int:
